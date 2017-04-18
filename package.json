@@ -1,0 +1,30 @@
+{
+  "name": "metalsmith-download-external-assets",
+  "version": "0.0.1",
+  "description": "Helper to download external assets to your build directory. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulobarcelos/metalsmith-download-external-assets.git"
+  },
+  "keywords": [
+    "metalsmith",
+    "download",
+    "static"
+  ],
+  "author": "Paulo Barcelos <paulo@azucrina.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paulobarcelos/metalsmith-download-external-assets/issues"
+  },
+  "homepage": "https://github.com/paulobarcelos/metalsmith-download-external-assets#readme",
+  "dependencies": {
+    "checksum": "^0.1.1",
+    "mime-types": "^2.1.15",
+    "promisify-node": "^0.4.0",
+    "rimraf": "^2.6.1"
+  }
+}

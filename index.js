@@ -12,8 +12,8 @@ module.exports = options => async (files, metalsmith, done) =>  {
 		// Default options
 		options = Object.assign(
 			{
-				temp : './.metalsmith-download-external-assets',
-				dest : 'external-assets'
+				temp        : '.metalsmith-download-external-assets',
+				destination : 'external-assets'
 			},
 			options
 		)
@@ -43,7 +43,7 @@ module.exports = options => async (files, metalsmith, done) =>  {
 
 		// Download and pipe the files
 		const results = await Promise.all(Object.keys(urlMap).map(id =>
-			cacheFile(id, urlMap[id], options.temp, options.dest, files)
+			cacheFile(id, urlMap[id], options.temp, options.destination, files)
 		))
 
 		// Replace all the external urls with the local ones

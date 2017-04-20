@@ -82,7 +82,7 @@ const cacheFile = async (id, url, tempDirectory, destDirectory, files) => {
 	const buffer = await fs.readFile(renamedPath)
 	files[finalPath] = {}
 	files[finalPath].contents = buffer
-	const localUrl = `/${destDirectory}/${newFilename}`
+	const localUrl = `${destDirectory}/${newFilename}`
 	// Return an object with the id and the localUrl
 	return {
 		id,

@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-download-external-assets",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Helper to download external assets to your build directory. ",
   "main": "index.js",
   "scripts": {

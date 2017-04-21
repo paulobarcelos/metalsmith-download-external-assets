@@ -12,7 +12,7 @@ module.exports = options => async (files, metalsmith, done) =>  {
 		// Default options
 		options = Object.assign(
 			{
-				temp        : '.metalsmith-download-external-assets',
+				temp        : `.metalsmith-download-external-asset-${(Math.random() * 100000000).toFixed(0)}`,
 				destination : 'external-assets'
 			},
 			options

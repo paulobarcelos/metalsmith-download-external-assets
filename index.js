@@ -12,15 +12,21 @@ module.exports = options => async (files, metalsmith, done) =>  {
 		// Default options
 		options = Object.assign(
 			{
-				temp        : `.metalsmith-download-external-asset-${(Math.random() * 100000000).toFixed(0)}`,
-				destination : 'external-assets'
+				temp        : `.metalsmith-download-external-assets-${(Math.random() * 100000000).toFixed(0)}`,
+				destination : 'external-assets',
+				clearTemp   : true
 			},
 			options
 		)
 
 		// Create a fresh temp directory
-		await rimraf(options.temp)
-		await fs.mkdir(options.temp)
+		if(options.clearTemp) {
+			await rimraf(options.temp)
+		}
+		try {
+			await fs.mkdir(options.temp)
+		}
+		catch(error) {}
 
 		// Extract all the urls to be downloaded
 		const urlMap = Object.keys(files)
@@ -59,7 +65,9 @@ module.exports = options => async (files, metalsmith, done) =>  {
 		})
 
 		// Clear the temp directory
-		await rimraf(options.temp)
+		if(options.clearTemp) {
+			await rimraf(options.temp)
+		}
 
 		done()
 	}
@@ -69,20 +77,34 @@ module.exports = options => async (files, metalsmith, done) =>  {
 }
 
 const cacheFile = async (id, url, tempDirectory, destDirectory, files) => {
-	// download the file to a temporary location
-	const tempPath = path.join(tempDirectory, checksum(url))
-	const response = await download(url, tempPath)
-	// rename the file, based on the checksum of the contents
-	const hash = await promisify(checksum.file)(tempPath)
-	const newFilename = `${hash}.${mime.extension(response.headers['content-type'])}`
-	const renamedPath = path.join(tempDirectory, newFilename)
-	await fs.rename(tempPath, renamedPath)
-	// pipe the file out to the destination
-	const finalPath = path.join( destDirectory, newFilename)
-	const buffer = await fs.readFile(renamedPath)
-	files[finalPath] = {}
-	files[finalPath].contents = buffer
-	const localUrl = `${destDirectory}/${newFilename}`
+	// Compute hash of the file based on the url
+	const hash = checksum(url)
+
+	// check if the file was already downloaded previously
+	let dir = await fs.readdir(tempDirectory)
+	let localUrl
+	dir = dir.filter(file => file.indexOf(hash) === 0)
+	if(dir.length === 1){
+		// File exists!
+		localUrl = `${destDirectory}/${dir[0]}`
+	}
+	else {
+		// download the file to a temporary location
+		const tempPath = path.join(tempDirectory, hash)
+		const response = await download(url, tempPath)
+		// rename the file adding the extensions
+		const newFilename = `${hash}.${mime.extension(response.headers['content-type'])}`
+		const renamedPath = path.join(tempDirectory, newFilename)
+		await fs.rename(tempPath, renamedPath)
+		// pipe the file out to the destination
+		const finalPath = path.join( destDirectory, newFilename)
+		const buffer = await fs.readFile(renamedPath)
+		files[finalPath] = {}
+		files[finalPath].contents = buffer
+
+		localUrl = `${destDirectory}/${newFilename}`
+	}
+
 	// Return an object with the id and the localUrl
 	return {
 		id,
